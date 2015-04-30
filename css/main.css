@@ -1,0 +1,230 @@
+body {
+    margin: 0 0;
+    padding: 0 0 50px 0;
+    font-size: 12px;
+    font-family: 'Raleway';
+}
+.dark-cover {
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 1;
+    position: absolute;
+    clear: both;
+}
+.button {
+    width: 30px;
+}
+
+.vis_text {
+    padding-top: 10px;
+}
+
+#intro {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    color: #FFF;
+    background-image: url('../img/citibike.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    text-align: center;
+    margin-bottom: 30px;
+}
+a {
+    z-index: 2;
+}
+
+#launch a{
+color: #FFF;
+opacity: 0.6;
+}
+
+#launch a:hover{
+    opacity: 1;
+}
+
+.row {
+    width: 100%;
+}
+
+.axis {
+  fill: gray;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.axis .halo {
+  stroke: gray;
+  stroke-width: 2px;
+  stroke-linecap: round;
+}
+
+.slider .handle path {
+  stroke: black;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+#map
+{
+  width: 40%;
+  height: 80%;
+  float: left;
+/*  margin: auto;*/
+  padding: 0;
+  z-index: 1;
+}
+
+#map_cover {
+    position:absolute;
+    width: 35%;
+    height: 80%;
+    padding: 0;
+    opacity: 0.4;
+        background-color: rgba(0,0,0,0.6);
+        z-index: 10;
+}
+
+#description_container{
+    width: 55%;
+    float: right;
+}
+
+#introtitle{
+    z-index: 4;
+    font-size: 120px;
+   font-family: 'Poiret One';
+   opacity: 0.85;
+}
+
+.intro-text {
+    z-index: 4;
+    color: #FFF;
+    margin: 0 auto;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    margin: auto;
+}
+
+#preintro, #byline{
+    z-index: 4;
+    padding: 5px;
+    font-size: 16px;
+    margin: auto;
+    text-align: center;
+    font-family: 'Raleway';
+}
+
+.ui-slider .ui-slider-handle{
+    width:40px; 
+    left: -20px;
+    height:40px; 
+    background:url(../img/bike.png) no-repeat; 
+    background-size: 40px;
+    position:absolute;
+    top: -15px;
+    border-style:none; 
+}
+
+#controls input{
+    float: left;
+}
+
+#controls label {
+    float: none;
+}
+
+#bike_categorize {
+    padding-top: 5px;
+    font-size: 13px;
+}
+
+#launch {
+    width: 100%;
+    z-index: 10;
+    position: absolute;
+    color: #fff;
+    text-align: center;
+/*    bottom: 250px;*/
+    font-family: "Raleway";
+    font-size: 20px;
+    bottom: 30px;
+    opacity: 0.7;
+}
+
+.viscontainer {
+    width: 90%;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    color: #000;
+    width: 90%;
+    z-index: 4;
+    top: 200px;
+    margin: auto;
+    font-size: 50px;
+    font-family: 'Poiret One';
+
+}
+
+.slider
+{
+    display: none;
+    width: 85%;
+}
+
+.bikes, .stations, .bikes svg, .stations svg {
+  position: absolute;
+}
+
+.bikes, .stations svg {
+  width: 60px;
+  height: 20px;
+  padding-right: 100px;
+  font: 10px sans-serif;
+}
+
+.stations {
+  fill: steelblue;
+  opacity: 0.3;
+/*  stroke: black;
+  stroke-width: .8px;*/
+}
+
+.bikes {
+  z-index: 1;
+  opacity: 1;
+} 
+
+.day {
+  -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+  background-color:#ffffff;
+  border:1px solid #dcdcdc;
+  display:inline-block;
+  cursor:pointer;
+  color:#666666;
+  padding:6px 14px;
+  text-shadow:0px 1px 0px #ffffff;
+}
+.day:hover {
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
+  background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+  background:-webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+  background:-o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+  background:-ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+  background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
+  background-color:#f6f6f6;
+}
+/*.day:active {
+  position:relative;
+  top:1px;
+}*/
