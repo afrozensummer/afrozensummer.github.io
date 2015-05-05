@@ -14,7 +14,39 @@ body {
     clear: both;
 }
 .button {
-    width: 30px;
+    width: 25px;
+}
+#dates {
+  margin: auto;
+  position: relative;
+  float: left;
+}
+
+#temp {
+  font-family: 'Poiret One';
+  margin-top: -8px;
+    font-size: 14px;
+
+  float: right;
+  padding-right: 5px;
+}
+
+#time {
+  font-size: 16px;
+  font-family: "Poiret One";
+  float: right;
+}
+
+#red {
+  color:red;
+}
+
+#blue {
+  color:blue;
+}
+
+#green {
+  color:green;
 }
 
 .vis_text {
@@ -36,19 +68,9 @@ body {
     background-position: center;
     position: relative;
     text-align: center;
-    margin-bottom: 30px;
 }
 a {
     z-index: 2;
-}
-
-#launch a{
-color: #FFF;
-opacity: 0.6;
-}
-
-#launch a:hover{
-    opacity: 1;
 }
 
 .row {
@@ -67,10 +89,39 @@ opacity: 0.6;
   stroke-linecap: round;
 }
 
+#barchart {
+  float: left;
+}
+
+#aggregate_chart {
+  float: right;
+}
+
+#stations_chart {
+  float: right;
+}
+
+#barchart {
+  width: 30%;
+}
+
+#bikeline {
+  width: 100%;
+}
+
+#aggregate_chart {
+  width: 30%;
+}
+
+#stations_chart {
+  width: 60%;
+}
+
+
 #map
 {
   width: 40%;
-  height: 80%;
+  height: 70%;
   float: left;
 /*  margin: auto;*/
   padding: 0;
@@ -107,6 +158,13 @@ opacity: 0.6;
     display: inline-block;
     width: 100%;
     margin: auto;
+    opacity: 0;
+}
+
+#weathericon img {
+  width: 22px;
+  margin-top: -12px;
+  float: right;
 }
 
 #preintro, #byline{
@@ -120,6 +178,7 @@ opacity: 0.6;
 
 .ui-slider {
   top: -3px;
+  width: 100%;
 }
 
 .ui-slider-horizontal {
@@ -128,7 +187,7 @@ opacity: 0.6;
 
 .ui-slider .ui-slider-handle{
     width:40px; 
-    left: -20px;
+    margin-left: -20px;
     height:40px; 
     background:url(../img/bike.png) no-repeat; 
     background-size: 40px;
@@ -137,30 +196,31 @@ opacity: 0.6;
     border-style:none; 
 }
 
-#controls input{
+#filters {
+/*  float: left;*/
+  margin-top: 0px;
+    font-family: 'Poiret One';
+        font-size: 16px;
+}
+
+#controls {
+  float: left;
+  left: 0;
+  position: relative;
+
+}
+
+#play_button {
     float: left;
 }
 
-#controls label {
-    float: none;
-}
-
-#bike_categorize {
-    padding-top: 5px;
-    font-size: 13px;
-}
-
-#launch {
-    width: 100%;
-    z-index: 10;
-    position: absolute;
-    color: #fff;
-    text-align: center;
-/*    bottom: 250px;*/
-    font-family: "Raleway";
-    font-size: 20px;
-    bottom: 30px;
-    opacity: 0.7;
+.background {
+  background-color: white;
+  float: left;
+  position: absolute;
+  opacity: 0.4;
+  width: 100%;
+  height: 100%;
 }
 
 .viscontainer {
@@ -175,14 +235,8 @@ opacity: 0.6;
     z-index: 4;
     top: 200px;
     margin: auto;
-    font-size: 50px;
+    font-size: 35px;
     font-family: 'Poiret One';
-}
-
-.slider
-{
-    display: none;
-    width: 85%;
 }
 
 .bikes, .stations, .bikes svg, .stations svg {
@@ -199,24 +253,61 @@ opacity: 0.6;
 .stations {
   fill: steelblue;
   opacity: 0.3;
-/*  stroke: black;
-  stroke-width: .8px;*/
+}
+
+#category_legend {
+    position:absolute;
+    top: 300px;
+    padding: 5px;
+    background-color: rgba(255,255,255,0.4);
+    z-index: 10;
+}
+
+#line_legend {
+  float: right;
+  top: -320px;
+  position: relative;
+  text-align: right;
+}
+
+#line_buttons {
+  float: left;
+  left: 80px;
+  position: relative;
+  top: -300px;
+}
+
+#pause {
+  display: none;
+  padding-right: 5px;
+}
+
+#play {
+  padding-right: 5px;
 }
 
 .bikes {
   z-index: 1;
   opacity: 1;
+  fill:#4D4D4D;
 } 
 
+.buttonactive {
+  background-color: #3399FF;
+  color: #FFF;
+    border:1px solid #dcdcdc;
+  display:inline-block;
+  cursor:pointer;
+  padding:6px 14px;
+}
+
 .day {
-  -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-  background-color:#ffffff;
+  background-color:rgba(255,255,255,0.3);
   border:1px solid #dcdcdc;
   display:inline-block;
   cursor:pointer;
   color:#666666;
   padding:6px 14px;
-  text-shadow:0px 1px 0px #ffffff;
 }
 .day:hover {
   background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
@@ -229,6 +320,5 @@ opacity: 0.6;
   background-color:#f6f6f6;
 }
 /*.day:active {
-  position:relative;
-  top:1px;
+  background-color: #4682B4;
 }*/

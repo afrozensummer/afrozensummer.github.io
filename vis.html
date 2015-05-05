@@ -15,6 +15,8 @@
     
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" />
     <script src = "js/averageDayVis.js"></script>
+    <script src = "js/aggregateVis.js"></script>
+    <script src = "js/station_line_chart.js"></script>
     <script src="js/bikelinechart.js"></script>
     
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
@@ -24,11 +26,11 @@
 html, body {
   width: 100%;
   height: 100%;
+  background: url(../img/skyline.jpg) no-repeat center center fixed;
+  background-size: cover;
   margin: 0;
   padding: 0;
 }
-
-
     </style>
   </head>
   <body class = "viscontainer"> 
@@ -36,173 +38,392 @@ html, body {
       CitiBike Visualization
     </div>
     <div class = "vis_text">
-      This is our CS171 Project: CityCycle.
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem aspernatur facilis ipsum, beatae! Quasi amet ratione perspiciatis velit, excepturi nisi. Magni repellat amet illum ducimus cum. Saepe harum repellendus perspiciatis. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti hic magnam ullam sed facere voluptas quasi, veritatis ex dolor totam dignissimos repellat nesciunt voluptates iste rerum fugiat suscipit voluptatum, possimus! <br><br>
+<!--       Select a day and press the play button to see CityBike users in action! By default the map shows each user as a black dot and tracks each biker's journey through New York City. You can also select the gender feature to color bikers by gender (females are red, males are blue) or by subscription level (subscribers are yellow and one time customers are blue). 
+      The two bar charts to the right of the map show how bike usage today compares to the other three days you can view. The top bar chart tracks the number of bikers who departed during the current hour on each of the days, while the bottom bar chart shows the total number of bikers who have departed by the current time on each of the four days. When you select the 'gender' or 'subscription' options, both bar charts will break down the data by the catagory you selected, with colors corresponding to the bikers on the map. While the bar charts help compare the current day to others, the line chart below the timeline displays the total number of bikes departing at each time over the course of the selected day. 
+      Feel free to drag the bike along the timeline to jump to a particular moment you'd like to see or switch days. To learn more about our motivation behind this project and why we selected these particular days, please go to 'Read Our Story' from our homepage! <br><br> -->
     </div>
 
-    <div id = "controls">
-    <input type="image" src="img/reset.png" name="reset" class="button" id = "reset" />
+<div id = "controls">
+            <input type="image" src="img/reset.png" name="reset" class="button" id = "reset" />
     <input type="image" src="img/play.png" name="play" class="button" id = "play" />
-    <input type="image" src="img/pause.png" name="pause" class="button" id = "pause" />
-    <!--<input type="range" data-highlight="true" name="minutes" min="0" max="0" step="1" value="0" class="slider" id="slider-time"; >-->
+    <input type="image" src="img/pause.png" name="pause" class="button" id = "pause" />  
+      </div>
+  <div id = "dates">
+      <button name = "dates" class = "buttonactive" type="button" value="june_29"> June 29</button>
+        <button name = "dates" class = "day" type="button" value="june_30"> June 30</button>
+        <button name = "dates" class = "day" type="button" value="july_1"> July 1</button>
+        <button name = "dates" class = "day" type="button" value="july_2"> July 2</button>
+        <button name = "dates" class = "day" type="button" value="july_3"> July 3</button>
+        <button name = "dates" class = "day" type="button" value="july_4"> July 4</button>
+        <button name = "dates" class = "day" type="button" value="july_5"> July 5</button>
+    </div>
+
     
-    
-  </div>
-  <div id = "bike_categorize"> 
+
+    <div id = "time"></div>
+      
+<br><br>    
+      <div id = "weathericon"><img src="/img/sun.png" alt=""></div>
+      <div id = "temp"></div>  
+      
+      <div id = "filters">
         Categorize By:
         <label><input type="radio" name="filter" value="none" checked> None </label>
         <label><input type="radio" name="filter" value="gender"> Gender </label>  
         <label><input type="radio" name="filter" value="subscription"> Subscription </label>
-        <label><input type="radio" name="filter" value="age"> Age </label>
-        <button  class = "day" type="button"> July 4</button>
-        <button class = "day" type="button">Dec 1</button>
-        <button class = "day" type="button">Other Day</button>
-        <button class = "day" type="button">Other Day</button>
-    </div><br>
+      </div>  
+
+    
     <div id="bikeline"></div>
   <div id="slider"></div> <br>
       
-    <div id = "description_container">
-      <div id = "time"></div>
-      <br>
-      <div id = "temp"></div>  </div><!-- <div id="map_cover"></div> -->
+<!--     <div id = "description_container">
       
-      <div id="legend"></div> 
+      <br>
+      
+    </div> --><!-- <div id="map_cover"></div> -->
+      
+      <div id="category_legend">
+          <span id= "option 1"></span> <br>
+          <span id= "option 2"></span> <br>
+          <span id= "option 3"></span>
+      </div> 
       <div id="map"></div>
       <div id="barchart"></div>
-      
+      <div id="aggregate_chart"></div>
+      <div id="stations_chart"></div>
+      <div id = "line_buttons"> 
+         <button  class = "buttonactive" type="button" name="starting" value = "switch"> Trips Starting </button>
+         <button class = "day" type="button" name="ending" value = "switch"> Trips ending </button>
+         <button class = "day" type="button" name="reset"> Reset </button>
+      </div>
+      <div id="line_legend"> 
+        <span id= "red">E 43 St & Vanderbilt Ave</span> <br>
+        <span id= "blue"></span> <br>
+        <span id= "green"></span>
+      </div>
 
-     
     <script type="text/javascript">
 
 // Variables
-var bike_data;
-var barchart_data;
+var june29_bikes;
+var june30_bikes; 
+var july1_bikes; 
+var july2_bikes; 
+var july3_bikes; 
+var july4_bikes; 
+var july5_bikes; 
 var station_data;
-var starting_time = new Date("2014-12-04 00:00:00"); 
-var ending_time = new Date("2014-12-05 00:00:00");
+var barchart_data;
+var stations_selected = [{name:"E 43 St & Vanderbilt Ave", color:"red"}];
+var current_day = "july_4";
+var starting_time = new Date("2014-06-29 00:00:00"); //start with july
+var ending_time = new Date("2014-06-29 23:59:00");
 var current_time = starting_time;
 var filter = "none";
 var filters = {
-    none: function(d) {return "#000"},
+    none: function(d) {
+
+      document.getElementById("option 1").innerHTML = "";
+      document.getElementById("option 2").innerHTML = "";
+      document.getElementById("option 3").innerHTML = "";
+
+      return "#4D4D4D"
+    },
     gender: function(d) { 
-      if(d.gender == 1) return "#0000ff";
-      if(d.gender == 2) return "#FF0000";
-      return "#8A2BE2";
+
+      document.getElementById("option 1").innerHTML = '<font color="#3399FF"> <font face="verdana"> &#8226 </font> Male </font>';
+      document.getElementById("option 2").innerHTML = '<font color="#FF6699"> <font face="verdana"> &#8226 </font> Female </font>';
+      document.getElementById("option 3").innerHTML = '<font color="#A0A0A0"> <font face="verdana"> &#8226 </font> Unspecified </font>';
+
+      if(d.gender == 1) return "#3399FF";
+      if(d.gender == 2) return "#FF6699";
+      return "#A0A0A0";
     },
-    subscription: function(d) { 
-      if(d.usertype == "Customer") return "#0080ff";
-      return "#ffa500";
-    },
-    age: function(d) { 
-      var age = 2014 - d["birth year"];
-      if(age < 20) return "#ADD8E6";
-      if(age >= 20 && age < 50) return "#2072BC";
-      if(age > 50) return "#00264A";
-      return "gray"; //no age indicated
+    subscription: function(d) {
+
+      document.getElementById("option 1").innerHTML = '<font color="#6699FF"><font face="verdana"> &#8226 </font> New Customer </font>';
+      document.getElementById("option 2").innerHTML = '<font color="#F5A50A"><font face="verdana"> &#8226 </font> Yearly Subscriber </font>';
+      document.getElementById("option 3").innerHTML = "";
+
+      if(d.usertype == "Customer") return "#6699FF";
+      return "#F5A50A";
     }
   };
+  //Formatting
+  var hour = d3.time.format("%H");
+  var formatTime = d3.time.format("%a, %H:%M");
+  var format_minute_only = d3.time.format("%M");
 
 queue()
-  .defer(d3.json, "data/stations.json") 
-  .defer(d3.csv, "data/december2014.csv")
-  .defer(d3.csv, "data/december1stweatherdata.csv")
-  .defer(d3.csv, "data/weatherdata.csv")
-    .await(function(error, stations, bikes, decemberfirst, weather) { 
-        // error handling
-        station_data = stations;
-        full_bike_data = bikes;
-        december_first_data = decemberfirst;
-        weather_data = weather;
-        data_loaded();
+  .defer(d3.json, "data/stations.json")
+  .defer(d3.csv, "data/june29.csv")
+  .defer(d3.csv, "data/june30.csv")
+  .defer(d3.csv, "data/july1.csv")
+  .defer(d3.csv, "data/july1_extra.csv")
+  .defer(d3.csv, "data/july2.csv")
+  .defer(d3.csv, "data/july3.csv")
+  .defer(d3.csv, "data/july4.csv")
+  .defer(d3.csv, "data/july5.csv")
+  .defer(d3.csv, "data/jun29_weather.csv")
+  .defer(d3.csv, "data/jun30_weather.csv")
+  .defer(d3.csv, "data/jul1_weather.csv")
+  .defer(d3.csv, "data/jul2_weather.csv")
+  .defer(d3.csv, "data/jul3_weather.csv")
+  .defer(d3.csv, "data/july4weather.csv")
+  .defer(d3.csv, "data/jul5_weather.csv")
+    .await(function(error, stations, june29_b, june30_b, july1_b, july_extra, july2_b, july3_b, july4_b, july5_b, june29_w, june30_w, july1_w, july2_w, july3_w, july4_w, july5_w) { 
+        if (!error) {
+        
+          station_data = stations;
 
+          june29_bikes = june29_b;
+          june30_bikes = june30_b;
+          july1_bikes = july_extra.concat(july1_b);
+          july2_bikes = july2_b;
+          july3_bikes = july3_b;
+          july4_bikes = july4_b;
+          july5_bikes = july5_b;
 
+          june29_weather = june29_w;
+          june30_weather = june30_w;
+          july1_weather = july1_w;
+          july2_weather = july2_w;
+          july3_weather = july3_w;
+          july4_weather = july4_w;
+          july5_weather = july5_w;
+
+          data_loaded();
+        } else {
+          console.log("error");
+        }
   });
 
 function data_loaded() {
-  //console.log("loaded");
-  // Edit data
+  
   var stationsList = station_data["stationBeanList"];
-  var j =0, bike_data=[]; 
-  while(new Date(full_bike_data[j].starttime) < d3.time.minute.floor(d3.time.minute.offset(ending_time,1))) {
-    if(new Date(full_bike_data[j].starttime) >= d3.time.minute.floor(starting_time)) {
-      bike_data.push(full_bike_data[j]);
-    }
-    j++;
-  }
+  bike_data = june29_bikes;
+  weather_data = june29_weather;
 
-  // Bar chart information
-  var day1 = d3.range(24).map(function () {
-        return 0;
-    });
-
-  // Aggregate bar chart
-  var minute_aggregate = d3.range(1440).map(function () {
-        return 0;
-  });
-
-  var formatHour = d3.time.format("%H");
-  var formatMinute = d3.time.format("%M");
-  var index = 0;
-  var lasthour = "00";
-
-  bike_data.forEach(function(i){
-    var hour = new Date (i.starttime);
-    var now = formatHour(hour);
-
-    // if new hour update the counter
-    if (now != lasthour) {
-      index +=1;
-      lasthour = now;
-    }
-    if (index == 24) {
-      return;
-    }
-    day1[index] += 1;
-
-  })
-
-  // Build the minute aggregated information
-  index = 0;
-  bike_data.forEach(function(d){
-    var time = new Date (d.starttime);
-
-    // Calculate index
-    var new_index = (60 * parseInt(formatHour(time))) + parseInt(formatMinute(time));
-    if (new_index == index){
-      minute_aggregate[index] += 1;
-    } else {
-      index +=1;
-      minute_aggregate[index] = minute_aggregate[index - 1] + 1; 
-    //console.log(new_index);
-  }
-
-  })
-  console.log(minute_aggregate);
-
-  //console.log(bike_data);
-  //console.log(bike_data[0].starttime);
-  //console.log(index);
-
-  var day2_fake = [50, 90, 75, 78, 639, 64, 75, 86, 85, 85, 64, 64, 98, 76, 23, 87, 34, 87, 678, 78, 346, 763, 354, 576];
-  //console.log(day2_fake.length);
-
-  //console.log(day1);
-
-  // Update barchart data
-  barchart_data = [{"date":"Day 1", "bikers": day1}, {"date": "Day 2", "bikers": day2_fake}];
-
-  //console.log(barchart_data);
-  //var average_hour_today = (bike_data.length / 24);
-
-  // Initialize the bar chart
-  var averageDay_vis = new averageDayVis(d3.select("#barchart"), barchart_data);
+  var all_data = [june29_bikes, june30_bikes, july1_bikes, july2_bikes, july3_bikes, july4_bikes, july5_bikes];
+  var averageDay_vis = new averageDayVis(d3.select("#barchart"), all_data);
+  var aggregate_vis = new aggregateVis(d3.select("#aggregate_chart"), all_data);
+  var stations_vis = new StationVis(d3.select("#stations_chart"), bike_data, stations_selected);
   var bikeline_vis = new bikeLineVis(d3.select("#bikeline"), bike_data);
 
-  //Format the weather
-  var hour = d3.time.format("%H");
-  // TODO: add in some filtering function based on day or something.
-  weather_data = december_first_data;
+  // Button functions
+   d3.selectAll("button[value=\"june_29\"]").on("click", function () {
+    if(this.value != current_day) {
+      clearInterval(myVar);
+      starting_time = new Date("2014-06-29 00:00:00");
+      ending_time = new Date("2014-06-29 23:59:00");
+
+      // Change bike_data
+      bike_data = june29_bikes;
+      weather_data = june29_weather;
+
+      // Reset function
+      $("#slider").slider({
+                value: starting_time.getTime(),
+                min: starting_time.getTime(),
+                max: ending_time.getTime(),
+      });
+      d3.select("svg").remove();
+      var bikeline_vis = new bikeLineVis(d3.select("#bikeline"), bike_data);
+      stations_vis.change_day(bike_data);
+      d3.selectAll("button[name=\"dates\"]").attr("class", 'day');
+      d3.selectAll("button[value=\"june_29\"]").attr("class", 'buttonactive');
+      d3.select("#play").style("display", "initial");
+      d3.select("#pause").style("display", "none");
+      resetbike();
+      current_day = this.value;
+    }
+  });
+
+  d3.selectAll("button[value=\"june_30\"]").on("click", function () {
+    if(this.value != current_day) {
+      clearInterval(myVar);
+      starting_time = new Date("2014-06-30 00:00:00");
+      ending_time = new Date("2014-06-30 23:59:00");
+
+      bike_data = june30_bikes;
+      weather_data = june30_weather;
+
+      $("#slider").slider({
+                value: starting_time.getTime(),
+                min: starting_time.getTime(),
+                max: ending_time.getTime(),
+      });
+      d3.select("svg").remove();
+      var bikeline_vis = new bikeLineVis(d3.select("#bikeline"), bike_data);
+      stations_vis.change_day(bike_data);
+      d3.selectAll("button[name=\"dates\"]").attr("class", 'day');
+      d3.selectAll("button[value=\"june_30\"]").attr("class", 'buttonactive');
+      d3.select("#play").style("display", "initial");
+      d3.select("#pause").style("display", "none");
+      resetbike();
+      current_day = this.value;
+    }
+  });
+
+  d3.selectAll("button[value=\"july_1\"]").on("click", function () {
+    if(this.value != current_day) {
+      clearInterval(myVar);
+      starting_time = new Date("2014-07-01 00:00:00");
+      ending_time = new Date("2014-07-01 23:59:00");
+
+      bike_data = july1_bikes;
+      weather_data = july1_weather;
+
+      $("#slider").slider({
+                value: starting_time.getTime(),
+                min: starting_time.getTime(),
+                max: ending_time.getTime(),
+      });
+      d3.select("svg").remove();
+      var bikeline_vis = new bikeLineVis(d3.select("#bikeline"), bike_data);
+      stations_vis.change_day(bike_data);
+      d3.selectAll("button[name=\"dates\"]").attr("class", 'day');
+      d3.selectAll("button[value=\"july_1\"]").attr("class", 'buttonactive');
+      d3.select("#play").style("display", "initial");
+      d3.select("#pause").style("display", "none");
+      resetbike();
+      current_day = this.value;
+    }
+  });
+
+  d3.selectAll("button[value=\"july_2\"]").on("click", function () {
+    if(this.value != current_day) {
+      clearInterval(myVar);
+      starting_time = new Date("2014-07-02 00:00:00");
+      ending_time = new Date("2014-07-02 23:59:00");
+
+      bike_data = july2_bikes;
+      weather_data = july2_weather;
+
+      $("#slider").slider({
+                value: starting_time.getTime(),
+                min: starting_time.getTime(),
+                max: ending_time.getTime(),
+      });
+      d3.select("svg").remove();
+      var bikeline_vis = new bikeLineVis(d3.select("#bikeline"), bike_data);
+      stations_vis.change_day(bike_data);
+      d3.selectAll("button[name=\"dates\"]").attr("class", 'day');
+      d3.selectAll("button[value=\"july_2\"]").attr("class", 'buttonactive');
+      d3.select("#play").style("display", "initial");
+      d3.select("#pause").style("display", "none");
+      resetbike();
+      current_day = this.value;
+    }
+  });
+
+  d3.selectAll("button[value=\"july_3\"]").on("click", function () {
+    if(this.value != current_day) {
+      clearInterval(myVar);
+      starting_time = new Date("2014-07-03 00:00:00");
+      ending_time = new Date("2014-07-03 23:59:00");
+
+      bike_data = july3_bikes;
+      weather_data = july3_weather;
+
+      $("#slider").slider({
+                value: starting_time.getTime(),
+                min: starting_time.getTime(),
+                max: ending_time.getTime(),
+      });
+      d3.select("svg").remove();
+      var bikeline_vis = new bikeLineVis(d3.select("#bikeline"), bike_data);
+      stations_vis.change_day(bike_data);
+      d3.selectAll("button[name=\"dates\"]").attr("class", 'day');
+      d3.selectAll("button[value=\"july_3\"]").attr("class", 'buttonactive');
+      d3.select("#play").style("display", "initial");
+      d3.select("#pause").style("display", "none");
+      resetbike();
+      current_day = this.value;
+    }
+  });
+
+  d3.selectAll("button[value=\"july_4\"]").on("click", function () {
+    if(this.value != current_day) {
+      clearInterval(myVar);
+      starting_time = new Date("2014-07-04 00:00:00");
+      ending_time = new Date("2014-07-04 23:59:00");
+
+      bike_data = july4_bikes;
+      weather_data = july4_weather;
+
+      $("#slider").slider({
+                value: starting_time.getTime(),
+                min: starting_time.getTime(),
+                max: ending_time.getTime(),
+      });
+      d3.select("svg").remove();
+      var bikeline_vis = new bikeLineVis(d3.select("#bikeline"), bike_data);
+      stations_vis.change_day(bike_data);
+      d3.selectAll("button[name=\"dates\"]").attr("class", 'day');
+      d3.selectAll("button[value=\"july_4\"]").attr("class", 'buttonactive');
+      d3.select("#play").style("display", "initial");
+      d3.select("#pause").style("display", "none");
+      resetbike();
+      current_day = this.value;
+    }
+  });
+
+  d3.selectAll("button[value=\"july_5\"]").on("click", function () {
+    if(this.value != current_day) {
+      clearInterval(myVar);
+      starting_time = new Date("2014-07-05 00:00:00");
+      ending_time = new Date("2014-07-05 23:59:00");
+
+      bike_data = july5_bikes;
+      weather_data = july5_weather;
+
+      $("#slider").slider({
+                value: starting_time.getTime(),
+                min: starting_time.getTime(),
+                max: ending_time.getTime(),
+      });
+      d3.select("svg").remove();
+      var bikeline_vis = new bikeLineVis(d3.select("#bikeline"), bike_data);
+      stations_vis.change_day(bike_data);
+      d3.selectAll("button[name=\"dates\"]").attr("class", 'day');
+      d3.selectAll("button[value=\"july_5\"]").attr("class", 'buttonactive');
+      d3.select("#play").style("display", "initial");
+      d3.select("#pause").style("display", "none");
+      resetbike();
+      current_day = this.value;
+    }
+  });
+
+  // Station buttons
+  d3.selectAll("button[name=\"reset\"]").on("click", function () {
+    stations_selected = [];
+    stations_vis.change_stations(stations_selected);
+
+    svg.selectAll(".stations")
+      .attr("highlighted", false)
+      .style("fill", "steelblue")
+      .style("opacity", .3);
+
+    document.getElementById("red").innerHTML = "";
+    document.getElementById("blue").innerHTML = "";
+    document.getElementById("green").innerHTML = "";
+  });
+
+  d3.selectAll("button[name=\"ending\"]").on("click", function () {
+    stations_vis.ending();
+    d3.selectAll("button[value=\"switch\"]").attr("class", 'day');
+    d3.selectAll("button[name=\"ending\"]").attr("class", 'buttonactive');
+  });
+
+  d3.selectAll("button[name=\"starting\"]").on("click", function () {
+    stations_vis.starting();
+    d3.selectAll("button[value=\"switch\"]").attr("class", 'day');
+    d3.selectAll("button[name=\"starting\"]").attr("class", 'buttonactive');
+  });
+
+  //Formating Weather and Date
   function strip(hour) {
     if (hour > 9)
       return hour;
@@ -211,11 +432,7 @@ function data_loaded() {
     }
   }
   document.getElementById("temp").innerHTML = "Temperature: " + weather_data[strip(hour(current_time))]["DryBulbFarenheit"]+ " F";
-  // Format the date
-  var formatDate = d3.time.format("%a, %b %e, %H:%M");
-  var format_day_hour = d3.time.format("%a, %b %e, %H");
-
-  document.getElementById("time").innerHTML = "Current Time: <br>" + formatDate(starting_time);
+  document.getElementById("time").innerHTML = "Current Time: " + formatTime(starting_time);
 
   // Bike Catergorize Functions
   d3.selectAll("input[name=\"filter\"]").on("click", function () {
@@ -224,8 +441,13 @@ function data_loaded() {
       .style("fill", function(d) {
         return filters[filter](d);
       });
+
+    // Update the bar chart
+    averageDay_vis.filter_called(filter, hour(current_time));
+    aggregate_vis.filter_called(filter, hour(current_time), format_minute_only(current_time));
   });
 
+  // Initialize the slider
   $("#slider").slider({
       value: starting_time.getTime(),
       min: starting_time.getTime(),
@@ -238,50 +460,34 @@ function data_loaded() {
       change: function() {
         update_hour_bar("slider change");
         update();
-
-        // Also update the bar chart here
-        
       }
   });
 
-
+  // Slider functions
   function update_hour_bar(type) {
-
     var new_time = new Date($("#slider").slider('value'));
-    var format_minute_only = d3.time.format("%M");
-    var format_hour_only = d3.time.format("%H");
-
-    // Update at the start of the hour only
-
-
-     if (format_minute_only(new_time) == "00" || (type == "manual change")){
-       console.log("time to update the bar chart");
-       averageDay_vis.updateVis(format_hour_only(new_time)); // actually do this.
+    // Update at the start of the hour only or when slid
+     if (format_minute_only(new_time) == "00" || (type == "manual change")) {
+       averageDay_vis.updateVis(hour(new_time)); // actually do this.
      }
-
-    // If it is a new hour 
-    // Call graph update here.
-    //averageDay_vis.onSelectionChange()
   }
+
   function update() {
     var new_time = new Date($("#slider").slider('value'));
-    document.getElementById("time").innerHTML = "Current Time: <br>" + formatDate(new_time);
+    aggregate_vis.updateVis(hour(new_time), format_minute_only(new_time));
+    document.getElementById("time").innerHTML = "Current Time: " + formatTime(new_time);
     document.getElementById("temp").innerHTML = "Temperature: " + weather_data[strip(hour(current_time))]["DryBulbFarenheit"]+ " F";
-
-    // var format_hour = d3.time.format("%H"); 
-
-    // //console.log(format_hour(new_time) == format_hour(current_time));
-
-    // if (d3.time.hour.floor(new_time).getTime() != d3.time.hour.floor(current_time).getTime()) {
-    //   console.log("new hour");
-    //   //update_hour_bar();
-    // }
-
+    if (weather_data[strip(hour(current_time))]["WeatherType"] == "-RA" || weather_data[strip(hour(current_time))]["WeatherType"] == "RA") {
+      document.getElementById("weathericon").innerHTML = "<img src='/img/rain.png' >";
+    }
+    else {
+      document.getElementById("weathericon").innerHTML = "<img src='/img/sun.png' >";
+    }
     var difference = Math.abs((new_time-current_time)/(60*1000));
         if(difference > 15) {
-          // remove all the bikes
+          // Remove all the bikes
           svg.selectAll(".bikes").remove();
-          // make the data for all the bikes in that period
+          // Make the data for all the bikes in that period
           minidata = all_bikes_for_date(new_time);
           createnewbikes(minidata);
           current_time = new_time;
@@ -305,31 +511,27 @@ function data_loaded() {
         }
   }
 
+  // Play buttons
   var myVar;
-  // document.getElementById("#play").oninput = function() { playbyyear(); };
-
-  // if we add to end, it'll just iterate through every minute...
-  d3.select("#play").style("display", "initial").on("click", playbyyear);
-  d3.select("#pause").on("click", function() {clearInterval(myVar);})
+  d3.select("#play").style("display", "initial").on("click", function() {
+    playbyyear();
+    d3.select("#play").style("display", "none");
+    d3.select("#pause").style("display", "initial");
+  });
+  d3.select("#pause").on("click", function() { clearInterval(myVar);
+    d3.select("#play").style("display", "initial");
+    d3.select("#pause").style("display", "none");
+  })
   d3.select("#reset").style("display", "initial").on("click", resetbike);
 
+  // Play button functions
   function playbyyear() {
     var temp=0;
     myVar = setTimeout(function () {
-        current_time = new Date(current_time.getTime() + 60*1000);
-        animate();
-        minidata = new_trips(current_time, true);
-        createnewbikes(minidata);
-        document.getElementById("time").innerHTML = "Current Time: <br>" + formatDate(current_time);
-        document.getElementById("temp").innerHTML = "Temperature: " + weather_data[strip(hour(current_time))]["DryBulbFarenheit"]+ " F";
-        d3.select("#slider-time").attr("value", function() {
-          // console.log(temp)
-          // temp = this.value+1;
-          // console.log(temp)
-          //console.log(d3.select("#ui-slider"))
-          return (this.value + 1);
-        });
-        $("#slider").slider('value', current_time.getTime());
+        //$("#slider").slider('value', this.value + 1);
+        var update_time = new Date(current_time.getTime() + 60*1000);
+
+        $("#slider").slider('value', update_time);
         if(current_time < ending_time) {
           playbyyear();
         }
@@ -338,45 +540,24 @@ function data_loaded() {
 
   function resetbike() {
     $("#slider").slider('value', starting_time.getTime());
-    current_time = starting_time;
-    minidata = new_trips(current_time, true);
+    update();
+
+    svg.selectAll(".bikes").remove();
+    minidata = all_bikes_for_date(current_time);
     createnewbikes(minidata);
-    document.getElementById("time").innerHTML = "Current Time: <br>" + formatDate(current_time);
-    document.getElementById("temp").innerHTML = "Temperature: " + weather_data[strip(hour(current_time))]["DryBulbFarenheit"]+ " F";
   }
-
-  // Create a date range slider
-  //var MyEventHandler = new Object();
-  //var slider = new Slider(d3.select("#slider"), [], MyEventHandler);
-
-  // Handle the event for the slider
-  /*$(MyEventHandler).bind("selectionChanged", function(event, value) {
-    document.getElementById("time").innerHTML = "Current Time: <br>" + formatDate(value.time);
-    
-    if(d3.time.minute.floor(new Date(value.time)) > d3.time.minute.floor(current_time)) {
-
-      animate();
-      current_time = new Date(value.time);
-      minidata = data_for_minute(current_time);
-      createnewbikes(minidata);
-      // console.log(minidata)
-      // console.log(current_time);
-    }
-  });*/
-
-
 
   // Build the map
   L.mapbox.accessToken = 'pk.eyJ1IjoiY2l0eWN5Y2xlIiwiYSI6IjZ3MXNtRW8ifQ.lmAxO5RTphn4Jo-QV63Vpg';
   var layer = L.mapbox.tileLayer('citycycle.lnkh0jpk');
   var map = L.map('map')
       .addLayer(layer)
-      .setView([40.72332345541449, -73.99], 12);
+      .setView([40.72332345541449, -73.99], 13);
 
   var svg = d3.select(map.getPanes().overlayPane).append("svg");
   var g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-  // returns all the trips for that minute, use a while loop with a condition so we don't go needlessly into the data
+  // Returns all the trips starting at that minute, use a while loop with a condition so we don't go needlessly into the data
   function new_trips(date, time_direction_forward) {
     var bike_list_minute = [];
     var i = 0; 
@@ -412,6 +593,7 @@ function data_loaded() {
     return bike_list_minute;
   }
 
+  // Creates a latitude longitude point time lines for a specific bike
   function time_line (bikes_data, bike_stop_time, bike_start_time) {
     var range = bike_stop_time - bike_start_time;
     range = range/(1000*60);
@@ -429,7 +611,7 @@ function data_loaded() {
     });
   }
 
-
+  // Find all bikes for a specific time
   function all_bikes_for_date(date) {
     var bike_list_minute = [];
     var date_rounded = d3.time.minute.floor(date);
@@ -449,6 +631,7 @@ function data_loaded() {
     return bike_list_minute;
   }
 
+  // Put bikes on a map!
   function createnewbikes (minidata) {
       var bikes = g.selectAll("bikes")
           .data(minidata)
@@ -463,7 +646,7 @@ function data_loaded() {
                     function(d) { 
                         new_coordinates = applyLatLngToLayer(d.time_line[d.minute]);
 
-                        // make the circle station a darker oppacity keep for a few secs then remove
+                        // Make the circle station a darker oppacity keep for a few secs then remove
                         if(d.minute == 0) {
                             emit(new_coordinates);
                         }
@@ -473,14 +656,81 @@ function data_loaded() {
                     })
   }
 
+  // Make the stations
   var stations = g.selectAll("stations")
             .data(stationsList)
             .enter()
             .append("circle")
             .attr("r", 4)
-            .attr("class", "stations");
+            .attr("class", "stations")
+            .attr("highlighted", "false")
+            .style("fill", function(d) {
+              if(d.stationName == "E 43 St & Vanderbilt Ave") {
+                d3.select(this)
+                  .attr("highlighted", "true")
+                  .style("opacity", .6);
+                return "red";
+              }
+            })
+            .on("click", function(d) {
+              d3.select(this).style("fill", function(d) {
+                  if(d3.select(this).attr("highlighted") == "false") {
+                    if(stations_selected.length < 3) {
+                      
+                      d3.select(this)
+                        .attr("highlighted", "true")
+                        .style("opacity", .6);
+                      
+                      var red = true;
+                      var blue = true;
+                      var green = true;
+                      var this_color = "green";
 
+                      stations_selected.forEach( function (e) {
+                        if(e.color == "red") {
+                          red = false;
+                        }
+                        if(e.color == "blue") {
+                          blue = false;
+                        }
+                        if(e.color == "green") {
+                          green = false;
+                        }
+                      });
 
+                      if(blue == true) this_color = "blue";
+                      if(red == true) this_color = "red";
+                     
+                      stations_selected.push({name:d.stationName, color:this_color});
+                      // New station added to line graph, update it
+                      stations_vis.change_stations(stations_selected);
+
+                      document.getElementById(this_color).innerHTML = d.stationName;
+                      return this_color;
+
+                    }
+                  }
+                  var i = stations_selected.map(function (e) { return e.name;}).indexOf(d.stationName);
+                  if(i != -1) {
+                    document.getElementById(stations_selected[i].color).innerHTML = "";
+                    stations_selected.splice(i, 1);
+                    stations_vis.change_stations(stations_selected);
+
+                  }
+                  d3.select(this)
+                    .attr("highlighted", "false")
+                    .style("opacity", .3);
+                  return  "steelblue";
+              });
+            })
+            .on("mouseover", function(d) {
+              d3.select(this).attr("r", 9);
+            })
+            .on("mouseout", function(d) {
+              d3.select(this).attr("r", 4);
+            });
+            
+  // Put the first bikes on the map
   var minidata = all_bikes_for_date(current_time);
   createnewbikes(minidata);
   reset();
@@ -492,6 +742,7 @@ function data_loaded() {
   }
 
   function reset() {
+    
     var x_coors = [];
     var y_coors = [];
 
@@ -540,16 +791,15 @@ function data_loaded() {
             coordinates.y + ")";
       })
         .transition()
-            .duration(100)
-            .style("opacity", .4)
-            .transition()
-              .duration(100)
-              .style("opacity", 0)
-              .remove()
+          .duration(100)
+          .style("opacity", .3)
+          .transition()
+            .duration(300)
+            .style("opacity", 0)
+            .remove()
   }
 
-  function animate() {
-   
+  function animate() {  
     svg.selectAll(".bikes")
       .transition()
         .attr("transform",
