@@ -57,11 +57,7 @@ html, body {
         <button name = "dates" class = "day" type="button" value="july_4"> July 4</button>
         <button name = "dates" class = "day" type="button" value="july_5"> July 5</button>
     </div>
-
-    
-
-    <div id = "time"></div>
-      
+    <div id = "time"></div> 
 <br><br>    
       <div id = "weathericon"><img src="/img/sun.png" alt=""></div>
       <div id = "temp"></div>  
@@ -72,8 +68,6 @@ html, body {
         <label><input type="radio" name="filter" value="gender"> Gender </label>  
         <label><input type="radio" name="filter" value="subscription"> Subscription </label>
       </div>  
-
-    
     <div id="bikeline"></div>
   <div id="slider"></div> <br>
       
@@ -88,7 +82,7 @@ html, body {
           <span id= "option 2"></span> <br>
           <span id= "option 3"></span>
       </div> 
-      <div id="map"></div>
+      <div id="map"><font size="4" color="red">LOADING...</font></div>
       <div id="barchart"></div>
       <div id="aggregate_chart"></div>
       <div id="stations_chart"></div>
@@ -116,7 +110,7 @@ var july5_bikes;
 var station_data;
 var barchart_data;
 var stations_selected = [{name:"E 43 St & Vanderbilt Ave", color:"red"}];
-var current_day = "june_29";
+var current_day = "july_4";
 var starting_time = new Date("2014-06-29 00:00:00"); //start with july
 var ending_time = new Date("2014-06-29 23:59:00");
 var current_time = starting_time;
@@ -200,7 +194,9 @@ queue()
   });
 
 function data_loaded() {
-  
+
+  document.getElementById("map").innerHTML = "";
+
   var stationsList = station_data["stationBeanList"];
   bike_data = june29_bikes;
   weather_data = june29_weather;
