@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+    
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    
+    <link href='http://fonts.googleapis.com/css?family=Raleway|Poiret+One' rel='stylesheet' type='text/css'>
+    
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" />
+    <script src = "js/musicVis.js"></script>
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <style type="text/css">
+
+html, body {
+  width: 100%;
+  height: 100%;
+  /*background: url(../img/skyline.jpg) no-repeat center center fixed;
+  */background-size: cover;
+  margin: 0;
+  padding: 0;
+}
+
+.dot {
+  opacity: .2;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+  cursor: ew-resize;
+}
+    </style>
+  </head>
+  <body class = "viscontainer"> 
+    <div class = "header">
+      Bach vs. Stravinsky Visualization
+    </div>
+
+<p id="chart"></p>
+
+  <div class = "vis_text">
+    <b> Legend </b> <br>
+    Flute: Light Sky Blue; <br>
+    Flue 2: steelblue <br>
+    Oboe 1: lightpink <br>
+    Oboe 2: deeppink <br>
+    Corno: Red <br>
+    Fagotti: Lime Green <br>
+    Chorus: LightSlateGray <br>
+    Trombe: Yellow Green <br>
+    Tromboni: Light Sea Green <br>
+    Harp: Peach Puff <br>
+    Viole: Orange <br>
+    Contrabass: Tomato <br>
+    Organ: Black
+    </div>
+
+    <script type="text/javascript">
+
+// Variables
+var score_data;
+var beat = 1;
+var composer = 'Bach';
+var starting_time = 1; //start with july
+// var ending_time = new Date("2014-06-29 23:59:00");
+var current_time = starting_time;
+var notes;
+function x(d) { 
+  return d.year_x / 10; 
+}
+  function y(d) { 
+    if (d.composer == 'Bach') {
+      if (d.line == 'soprano')
+        return 25;
+      else if (d.line == 'middle')
+        return 20;
+      else if (d.line == 'bass')
+        return 15;
+    }
+    if (d.composer == 'Stravinsky') {
+      if (d.line == 'soprano')
+        return 60;
+      else if (d.line == 'middle')
+        return 55;
+      else if (d.line == 'bass')
+        return 50;
+      else
+        return 65;
+    }
+  }
+  function radius(d) { 
+    if (d.duration <= .5)
+      return 2.7;
+    else if (d.duration > .5 && d.duration <= 2)
+      return 3.2;
+    else if (d.duration > 2 && d.duration <= 3)
+      return 3.8;
+    else
+      return 4.5; }
+  function color(d) { 
+    if (d.instrument == 'organ') {
+      return '#000';
+    }
+    else {
+      if (d.instrument == 'flute')
+        return '#87CEFA';
+      else if (d.instrument == 'flute_b')
+        return 'steelblue';
+      else if(d.instrument == 'oboe')
+        return 'lightpink';
+      else if (d.instrument == 'oboe_b')
+        return 'deeppink';
+      else if (d.instrument == 'corno')
+        return 'red';
+      else if (d.instrument == 'fagotti')
+        return 'LimeGreen';
+      else if (d.instrument == 'chorus')
+        return 'LightSlateGray';
+      else if (d.instrument == 'trombe')
+        return 'YellowGreen';
+      else if (d.instrument == 'trombone')
+        return 'LightSeaGreen';
+      else if (d.instrument == 'trombone_b')
+        return 'Green';
+      else if (d.instrument == 'harp')
+        return 'PeachPuff';
+      else if (d.instrument == 'viole')
+        return 'Orange';
+      else if (d.instrument == 'contrabass')
+        return 'Tomato';
+    }
+      
+  }
+  function key(d) { return d; }
+
+  // Chart dimensions.
+  var margin = {top: 5.5, right: 10.5, bottom: 19.5, left: 19.5},
+      width = 1000 - margin.right,
+      height = 200 - margin.top - margin.bottom;
+
+  // Various scales. These domains make assumptions of data, naturally.
+  var xScale = d3.scale.linear().domain([1, 18]).range([0, width]),
+      yScale = d3.scale.linear().domain([10, 65]).range([height, 0]),
+      radiusScale = d3.scale.linear().domain([2, 10]).range([0, 40]);
+      // colorScale = d3.scale.category10();
+
+// The x & y axes.
+var xAxis = d3.svg.axis().orient("bottom").scale(xScale).ticks(20, d3.format(",d")),
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// Create the SVG container and set the origin.
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Add the x-axis.
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+// Add the year label; the value is set on transition.
+var label = svg.append("text")
+    .attr("class", "year label")
+    .attr("text-anchor", "end")
+    .attr("y", height - 90)
+    .attr("x", width)
+    .text(100);
+
+// Load the data.
+d3.csv("data/bwv_769.csv", function(music_data) {
+
+  function beats(measure, beat, music_data) {
+    var i = 0;
+    var notes = [];
+    while (i < music_data.length) {
+      // console.log(score_data[i].measure);
+      if(music_data[i].measure == measure && (music_data[i].starttime <= beat || music_data[i].stoptime >= beat))
+      {
+        notes.push(music_data[i]);
+      }
+      i++;
+    }
+    return notes;;
+  }
+
+  var minidata = beats(current_time, beat, music_data);
+
+  // Add a dot per nation. Initialize the data at 1800, and set the colors.
+  var dot = svg.append("g")
+      .attr("class", "dots")
+    .selectAll(".dot")
+      .data(minidata)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .style("fill", function(d) { return color(d); })
+      .call(position);
+
+  // Add a title.
+  dot.append("title")
+      .text(function(d) { return d.instrument; });
+
+  // Add an overlay for the year label.
+  var box = label.node().getBBox();
+
+  var overlay = svg.append("rect")
+        .attr("class", "overlay")
+        .attr("x", box.x)
+        .attr("y", box.y)
+        .attr("width", box.width)
+        .attr("height", box.height)
+        .on("mouseover", enableInteraction);
+
+  // Start a transition that interpolates the data based on year.
+  svg.transition()
+      .duration(80000)
+      .ease("linear")
+      .tween("year", tweenYear)
+      .each("end", enableInteraction);
+
+  // Positions the dots based on data.
+  function position(dot) {
+    dot .attr("cx", function(d) { return xScale(x(d)); })
+        .attr("cy", function(d) { return yScale(y(d)); })
+        .attr("r", function(d) { return radiusScale(radius(d)); });
+  }
+
+  // After the transition finishes, you can mouseover to change the year.
+  function enableInteraction() {
+    var yearScale = d3.scale.linear()
+        .domain([10, 200])
+        .range([box.x + 10, box.x + box.width - 10])
+        .clamp(true);
+
+    // Cancel the current transition, if any.
+    svg.transition().duration(0);
+
+    overlay
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout)
+        .on("mousemove", mousemove)
+        .on("touchmove", mousemove);
+
+    function mouseover() {
+      label.classed("active", true);
+    }
+
+    function mouseout() {
+      label.classed("active", false);
+    }
+
+    function mousemove() {
+      displayYear(yearScale.invert(d3.mouse(this)[0]));
+    }
+  }
+
+  function createnotes (minidata) {
+    var dot = svg.append("g")
+      .attr("class", "dots")
+    .selectAll(".dot")
+      .data(minidata)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .style("fill", function(d) { return color(d); })
+      .call(position);
+  }
+
+
+  // Tweens the entire chart by first tweening the year, and then the data.
+  // For the interpolated data, the dots and label are redrawn.
+  function tweenYear() {
+    var year = d3.interpolateNumber(10, 320);
+    return function(t) { displayYear(year(t)); };
+  }
+
+  // Updates the display to show the specified year.
+  function displayYear(year) {
+    
+    //dot.data(interpolateData(year), key).call(position);
+    measure = Math.floor(year / 10);
+    //console.log(measure)
+    beat = d3.round(year - (measure * 10));
+    if (beat >=0 && beat < 2.5)
+      beat = 1;
+    else if (beat >=2.5 && beat < 5)
+      beat = 2;
+    else if (beat >=5 && beat < 7.5)
+      beat = 3;
+    else
+      beat = 4;
+
+    if (measure == 18 && beat < 2) {
+      console.log("hi")
+      svg.selectAll("g")
+        .remove();
+
+      xScale = d3.scale.linear().domain([18, 37]).range([0, width]);
+      xAxis = d3.svg.axis().orient("bottom").scale(xScale).ticks(20, d3.format(",d"));
+
+      svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    }
+    if (measure == 37 && beat < 2) {
+      console.log("hi")
+      svg.selectAll("g")
+        .remove();
+
+      xScale = d3.scale.linear().domain([37, 56]).range([0, width]);
+      xAxis = d3.svg.axis().orient("bottom").scale(xScale).ticks(20, d3.format(",d"));
+
+      svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    }
+
+    //animate(year);
+    minidata = beats(measure, beat, music_data);
+    createnotes(minidata);
+    //dot.data(minidata).call(position);
+    //console.log(minidata);
+    // console.log(beat);
+    setTimeout(function() {
+      label.text('Measure:'+ measure + ' Beat:' + beat)
+        .attr("font-size", '20px');
+    }, 100);
+
+
+    
+    //label.text(Math.round(year));
+  }
+
+  var audio = new Audio('music/Stravinsky_Bach.mp3');
+  audio.play();
+
+});
+
+    </script>
+  </body>
+</html>
