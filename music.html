@@ -174,11 +174,13 @@ var label = svg.append("text")
     .attr("x", width)
     .text(100);
 
+var audio = new Audio('music/Stravinsky_Bach.mp3');
+audio.play();
+
 // Load the data.
 d3.csv("data/bwv_769.csv", function(music_data) {
 
-  var audio = new Audio('music/Stravinsky_Bach.mp3');
-  audio.play();
+
 
   function beats(measure, beat, music_data) {
     var i = 0;
