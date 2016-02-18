@@ -44,6 +44,12 @@ html, body {
 <p id="chart"></p>
 
   <div class = "vis_text">
+    <div>
+      I decided to abstract out the differences between canon, counterpoint, and filler. Instead, I focused on comparing the orchestration of the original 3 lines of the organ. The radius of the circle represents how long each note is. Additional counterpoint and notes not found in the original Bach version is on the top line.
+
+      <br><br>
+    </div>
+
     <b> Legend </b> <br>
     Flute: Light Sky Blue; <br>
     Flue 2: steelblue <br>
@@ -283,7 +289,7 @@ d3.csv("data/bwv_769.csv", function(music_data) {
   // Tweens the entire chart by first tweening the year, and then the data.
   // For the interpolated data, the dots and label are redrawn.
   function tweenYear() {
-    var year = d3.interpolateNumber(10, 320);
+    var year = d3.interpolateNumber(10, 560);
     return function(t) { displayYear(year(t)); };
   }
 
