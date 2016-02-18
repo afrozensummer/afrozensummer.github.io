@@ -43,28 +43,47 @@ html, body {
 
 <p id="chart"></p>
 
-  <div class = "vis_text">
-    <div>
+  <div class = "vis_text" id = 'music'>
+
+          
+       <div class = "music_left"> 
+  
+    <b id = 'legend'>Legend </b> <br>
+    <div id = 'legend_left'>
+      <b>Flute 1:</b> <div id = 'flute'>Light Sky Blue</div>
+    
+      <b>Flute 2:</b> <div id = 'flute_2'>steelblue</div>
+      <b>Oboe 1:</b> <div id = 'oboe'>lightpink</div>
+      <b>Oboe 2:</b> <div id = 'oboe_2'>deeppink</div>
+      <b>Corno:</b> <div id = 'corno'>Red </div>
+      <b>Fagotti:</b> <div id = 'fagotti'> Lime Green </div>
+      
+      <b>Trombe:</b> <div id = 'trombe'> Yellow Green </div>
+    
+    </div>
+    <div id = 'legend_right'>
+      <b> Trombone:</b> <div id = 'trombone'> Light Sea Green </div>
+      <b>Trombone 2:</b> <div id = 'trombone_2'> Medium Sea Green</div>
+      <b>Chorus:</b> <div id = 'chorus'> LightSlateGray </div>
+      <b> Harp:</b> <div id = 'harp'> Peach Puff </div>
+      <b>Viole:</b> <div id = 'viole'> Orange </div>
+      <b>Contrabass:</b> <div id = 'tomato'>Tomato </div>
+      <b>Organ:</b><br> Black
+    </div>
+    
+    
+     </div>
+
+     <div class = "music_right">
       I decided to abstract out the differences between canon, counterpoint, and filler. Instead, I focused on comparing the orchestration of the original 3 lines of the organ. The radius of the circle represents how long each note is. Additional counterpoint and notes not found in the original Bach version is on the top line.
 
       <br><br>
     </div>
 
-    <b> Legend </b> <br>
-    Flute: Light Sky Blue; <br>
-    Flue 2: steelblue <br>
-    Oboe 1: lightpink <br>
-    Oboe 2: deeppink <br>
-    Corno: Red <br>
-    Fagotti: Lime Green <br>
-    Chorus: LightSlateGray <br>
-    Trombe: Yellow Green <br>
-    Tromboni: Light Sea Green <br>
-    Harp: Peach Puff <br>
-    Viole: Orange <br>
-    Contrabass: Tomato <br>
-    Organ: Black
-    </div>
+
+
+    
+  </div>
 
     <script type="text/javascript">
 
@@ -90,13 +109,13 @@ function x(d) {
     }
     if (d.composer == 'Stravinsky') {
       if (d.line == 'soprano')
-        return 60;
-      else if (d.line == 'middle')
         return 55;
-      else if (d.line == 'bass')
+      else if (d.line == 'middle')
         return 50;
+      else if (d.line == 'bass')
+        return 45;
       else
-        return 65;
+        return 60;
     }
   }
   function radius(d) { 
@@ -118,29 +137,31 @@ function x(d) {
       else if (d.instrument == 'flute_b')
         return 'steelblue';
       else if(d.instrument == 'oboe')
-        return 'lightpink';
+        return '#FFB6C1';
       else if (d.instrument == 'oboe_b')
-        return 'deeppink';
+        return '#FF1493';
       else if (d.instrument == 'corno')
-        return 'red';
+        return '#FF0000';
       else if (d.instrument == 'fagotti')
-        return 'LimeGreen';
+        return '#32CD32';
       else if (d.instrument == 'fagotti_b')
-        return 'DarkGreen';
+        return '#006400';
       else if (d.instrument == 'chorus')
-        return 'LightSlateGray';
-      else if (d.instrument == 'trombe' || d.instrument == 'trombe_b')
-        return 'YellowGreen';
+        return '#F0F8FF';
+      else if (d.instrument == 'trombe')
+        return '#9ACD32';
+      else if (d.instrument == 'trombe_b')
+        return '#7FFFD4';
       else if (d.instrument == 'trombone')
-        return 'LightSeaGreen';
+        return '#20B2AA';
       else if (d.instrument == 'trombone_b')
-        return 'Green';
+        return '#3CB371';
       else if (d.instrument == 'harp')
-        return 'PeachPuff';
+        return '  #FFDAB9';
       else if (d.instrument == 'viole')
-        return 'Orange';
+        return '#FFA500';
       else if (d.instrument == 'contrabass')
-        return 'Tomato';
+        return '  #FF6347';
     }
       
   }
@@ -148,11 +169,11 @@ function x(d) {
 
   // Chart dimensions.
   var margin = {top: 5.5, right: 10.5, bottom: 19.5, left: 19.5},
-      width = 1000 - margin.right,
+      width = 1100 - margin.right,
       height = 200 - margin.top - margin.bottom;
 
   // Various scales. These domains make assumptions of data, naturally.
-  var xScale = d3.scale.linear().domain([1, 18]).range([0, width]),
+  var xScale = d3.scale.linear().domain([1, 20]).range([0, width]),
       yScale = d3.scale.linear().domain([10, 65]).range([height, 0]),
       radiusScale = d3.scale.linear().domain([2, 10]).range([0, 40]);
       // colorScale = d3.scale.category10();
@@ -178,7 +199,7 @@ svg.append("g")
 var label = svg.append("text")
     .attr("class", "year label")
     .attr("text-anchor", "end")
-    .attr("y", height - 90)
+    .attr("y", height - 75)
     .attr("x", width)
     .text(100);
 
@@ -309,12 +330,12 @@ d3.csv("data/bwv_769.csv", function(music_data) {
     else
       beat = 4;
 
-    if (measure == 18 && beat < 2) {
+    if (measure == 19 && beat < 2) {
       console.log("hi")
       svg.selectAll("g")
         .remove();
 
-      xScale = d3.scale.linear().domain([18, 37]).range([0, width]);
+      xScale = d3.scale.linear().domain([20, 38]).range([0, width]);
       xAxis = d3.svg.axis().orient("bottom").scale(xScale).ticks(20, d3.format(",d"));
 
       svg.append("g")
@@ -328,7 +349,7 @@ d3.csv("data/bwv_769.csv", function(music_data) {
       svg.selectAll("g")
         .remove();
 
-      xScale = d3.scale.linear().domain([37, 56]).range([0, width]);
+      xScale = d3.scale.linear().domain([38, 57]).range([0, width]);
       xAxis = d3.svg.axis().orient("bottom").scale(xScale).ticks(20, d3.format(",d"));
 
       svg.append("g")

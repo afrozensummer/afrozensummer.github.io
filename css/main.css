@@ -319,6 +319,90 @@ a {
   filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
   background-color:#f6f6f6;
 }
+
+.music_left {
+  width: 30%;
+  float: left;
+  padding-left: 20px;
+}
+
+.music_right {
+  width: 60%;
+  float: left;
+  padding-right: 20px;
+}
+
+#legend {
+  font-size: 18px;
+}
+
+#legend_left {
+  width: 50%;
+  float: left;
+}
+#legend_right {
+  width: 50%;
+  float: left;
+}
+
+#flute {
+  color: #87CEFA;
+}
+
+#flute_2 {
+  color: #4682B4;
+}
+
+#oboe {
+  color: #FFB6C1;
+}
+
+#oboe_2 {
+  color: #FF1493;
+}
+
+#corno {
+  color: #FF0000;
+}
+
+#fagotti {
+  color: #32CD32;
+}
+
+#fagotti_2 {
+  color: #006400;
+}
+
+#chorus {
+  color: #778899;
+}
+
+#trombe {
+  color: #9ACD32;
+}
+
+#trombe_2 {
+  color: #7FFFD4  ;
+}
+
+#trombone {
+  color: #20B2AA;
+}
+
+#trombone_2 {
+  color: #3CB371;
+}
+#harp {
+  color:  #FFDAB9;
+}
+
+#viole {
+  color: #FFA500;
+}
+
+#tomato{
+  color:  #FF6347;
+}
 /*.day:active {
   background-color: #4682B4;
 }*/
