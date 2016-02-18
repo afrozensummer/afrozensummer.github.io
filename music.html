@@ -63,7 +63,7 @@ html, body {
     </div>
     <div id = 'legend_right'>
       <b> Trombone:</b> <div id = 'trombone'> Light Sea Green </div>
-      <b>Trombone 2:</b> <div id = 'trombone_2'> Medium Sea Green</div>
+      <b>Trombone 2+3:</b> <div id = 'trombone_2'> Medium Sea Green</div>
       <b>Chorus:</b> <div id = 'chorus'> LightSlateGray </div>
       <b> Harp:</b> <div id = 'harp'> Peach Puff </div>
       <b>Viole:</b> <div id = 'viole'> Orange </div>
@@ -330,7 +330,7 @@ d3.csv("data/bwv_769.csv", function(music_data) {
     else
       beat = 4;
 
-    if (measure == 19 && beat < 2) {
+    if (measure == 20 && beat < 2) {
       console.log("hi")
       svg.selectAll("g")
         .remove();
@@ -344,7 +344,7 @@ d3.csv("data/bwv_769.csv", function(music_data) {
         .call(xAxis);
 
     }
-    if (measure == 37 && beat < 2) {
+    if (measure == 38 && beat < 2) {
       console.log("hi")
       svg.selectAll("g")
         .remove();
